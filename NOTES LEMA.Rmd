@@ -53,8 +53,8 @@ boxplot(x,main = "After\nhandling outliers" , col = "green",cex.main=0.7)
 ```{r}
 frequencies <- c(Female = 35, Children = 25, Male = 40)
 barplot(frequencies, names.arg = names(frequencies), cex.names=0.9,
-        horiz = FALSE, col = chosen_color) 
-chosen_color <- c("purple", "salmon1", "pink")
+        horiz = FALSE, col = "skyblue") 
+
 
 
 ```
@@ -210,24 +210,30 @@ barplot(table(bn))
 
 
 ```{r}
+# Set seed for reproducibility
 set.seed(13092024)
-y <- rnorm(1000, mean = 5, sd = 1.5)
-error_term <- rnorm(1000)
-z <- 4 + 8*x + rnorm(1000) # linear dependence between x and z
 
-LR <- lm(z ~ y)
+# Generate data
+x <- rnorm(1000, mean = 5, sd = 1.5)  # Define x
+y <- rnorm(1000, mean = 5, sd = 1.5)  # Generate y
+z <- 4 + 8 * x + rnorm(1000)          # Linear dependence between x and z
 
+# Linear regression
+LR <- lm(z ~ x)  # Use x as the predictor for z
 
-par(mfrow = c(1, 2))
-plot(x, y, main = "Scatter plot of x and y", col = "blue", pch = 16); grid()
+# Scatter plots
+par(mfrow = c(1, 2))  # Set up plotting area for 2 plots
+plot(x, y, main = "Scatter plot of x and y", col = "blue", pch = 16)
+grid()
 plot(x, z, main = "Scatter plot of x and z", col = "blue", pch = 16)
-abline(LR, col = "red")
-head(df<-data.frame(x,z),10)
+abline(LR, col = "red")  # Add regression line
+
+# Create data frame and display first 10 rows
+df <- data.frame(x = x, z = z)
+head(df, 10)
 
 ```  
-```{r}
-bin_nor<-rbinom(1000)
-```
+
 
 
 
