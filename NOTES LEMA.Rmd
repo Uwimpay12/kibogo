@@ -1,0 +1,396 @@
+---
+title: "Untitled"
+author: "self studies"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+x <- c(19.103, 19.632, 22.494, 20.113, 10.5, 22.744, 20.737, 17.976, 
+       18.901, 192.87, 21.959, 0.001, 20.641, 20.177, 19.111, 22.859, 
+       207.97, 16.853, 21.122, 19.244, 18.291, 19.651, 18.358, 18.834, 19)
+boxplot(x_copy<-x)
+```
+
+
+
+```{r}
+Q <- as.numeric(quantile(x, probs = c(0.25, 0.5, 0.75)))
+d <- as.data.frame(t(Q))
+names(d) <- paste0("Q", 1:length(Q))
+rownames(d) <- "stats"
+d$IQR <- d$Q3 - d$Q1
+d$lowerlim<-d$Q1-1.5*d$IQR
+d$upperlim<-d$Q3+1.5*d$IQR
+d
+```
+```{r}
+(d.out <- data.frame(x = x, outlier = x < d$lowerlim | x >  d$upperlim))
+```
+
+```{r}
+(bxpt <- boxplot(x, range = 1.5, plot = FALSE))
+```
+```{r}
+x[d.out$outlier]
+bxpt$out
+bxpt[["out"]]
+```
+```{r}
+# x[d.out$outlier] <- NA or use x
+x[d.out$outlier] <- mean(x,na.rm = TRUE)
+x
+```
+```{r}
+par(mfrow = c(1,2))
+boxplot(x_copy,main = "Before\nhandling outliers", cex.min = 0.7)
+boxplot(x,main = "After\nhandling outliers" , col = "green",cex.main=0.7)
+```
+```{r}
+frequencies <- c(Female = 35, Children = 25, Male = 40)
+barplot(frequencies, names.arg = names(frequencies), cex.names=0.9,
+        horiz = FALSE, col = chosen_color) 
+chosen_color <- c("purple", "salmon1", "pink")
+
+
+```
+
+
+```{r}
+pie(frequencies, cex = 0.5,
+    labels = paste0(names(frequencies), "(" , frequencies, ")"),
+    col = c("purple", "salmon1", "pink"))
+
+  
+```
+```{r}
+set.seed(12092024)
+x <- sample(1:120, size = 1000, replace = TRUE)
+par(mfrow=c(1,2))
+  hist(x, probability = TRUE)
+plot(density(x))
+```
+
+
+```{r}
+hist(x, probability = TRUE, col = colors()[10])
+lines(density(x), col = "blue", lwd = 2, lty = 3 )
+```
+
+```{r}
+sl <- iris$Sepal.Length
+with(iris, hist(Sepal.Length, probability = TRUE))
+lines(density(iris$Sepal.Length), col = "red")
+```
+
+```{r}
+x <- seq(0, 2*pi, le = 50)
+y <- sin(x)
+plot(x,y, pch = 16, col = "blue")
+```
+exercise 
+make scatter plot 
+
+```{r}
+f<-Petal.Length ~ Petal.Width
+lr <- lm(f, data = iris)
+plot(f, data = iris, col = Species, pch = 16)
+abline(lr, col = "blue", lwd = 2, lty= 3)
+legend("topleft", legend = unique(iris$Species), col = unique(iris$Species), pch=16, bty= "n")
+
+```
+
+uniform distribution
+```{r}
+set.seed(13092024)
+unif_dist <- runif(1000)
+norm_dist<-rnorm(1000)
+hist(unif_dist, probability = TRUE, xlab = NULL,
+     main = "Histogram of uniform distribution", col = "turquoise")
+lines(density(unif_dist), col = "red", lwd = 2, lty = 2)
+abline(v = mean(unif_dist), col = "blue", lty = 2, lwd = 2)
+legend("topleft", lty = c(2, 2), 
+       col = c("red", "blue"), legend = c("Density", "Average"))
+```
+
+```{r}
+(vx <- var(x))
+```
+```{r}
+mean(x)
+```
+<!-- test if the uniform distribution is normal -->
+
+```{r}
+ks.test(unif_dist, "pnorm")
+ks.test(norm_dist,"pnorm")
+```
+```{r}
+# UNIFORM
+qqnorm(unif_dist)
+qqline(unif_dist, col = "blue",lwd=3)
+
+# FOR NORMAL
+qqnorm(norm_dist)
+qqline(norm_dist,col="red",lwd=3)
+```
+<!-- Binomial distriburtion -->
+```{r}
+bin<-rbinom(10000,1,0.2)
+```
+```{r}
+barplot(table(bin))
+```
+
+
+
+```{r}
+rbinom_dist <- rbinom(10000, 1, 0.3)
+hist(rbinom_dist, probability = TRUE, main = "Histogram of binomial distribution", 
+     col = "turquoise", breaks = 20, xlab = NULL)
+lines(density(rbinom_dist), col = "red", lwd = 2, lty = 2)
+abline(v = mean(rbinom_dist), col = "blue", lty = 2, lwd = 2) # vertical line
+legend("topleft", lty = c(2, 2), 
+       col = c("red", "blue"), legend = c("Density", "Average"))
+
+```
+```{r}
+# Generate binomial distribution data
+rbinom_dist <- rbinom(10000, 1, 0.3)
+
+# Calculate frequencies of 0s and 1s
+freq_table <- table(rbinom_dist)
+
+# Create a bar plot
+barplot(freq_table, 
+        main = "Bar Plot of Binomial Distribution", 
+        col = "turquoise", 
+        xlab = "Outcome", 
+        ylab = "Frequency",
+        names.arg = c("0", "1"),
+        border = "black")
+
+# Add a legend for clarity
+legend("topright", legend = c("0: Failure", "1: Success"), fill = "turquoise")
+
+
+```
+
+
+
+```{r}
+ set.seed(13092024)
+gauss_dist <- rnorm(1000, mean = 0, sd = sqrt(1))
+hist(gauss_dist, probability = TRUE, breaks = 30, xlab = NULL,
+     main = "Histogram of standard normal\ndistribution", col = "turquoise")
+lines(density(gauss_dist), col = "red", lwd = 2, lty = 2)
+abline(v = mean(gauss_dist), col = "blue", lty = 2, lwd = 2)
+legend("topleft", lty = c(2, 2), 
+       col = c("red", "blue"), legend = c("Density", "Average"))
+```
+```{r}
+mean(gauss_dist)
+sd(gauss_dist )
+```
+
+<!-- scatter plot to show relationship between two variable -->
+```{r}
+sn<-rnorm(1000,mean = 0,sd = 1)
+hist(sn)
+```
+```{r}
+bn<-rbinom(10000, 50, 0.3)
+barplot(table(bn))
+```
+
+
+
+```{r}
+set.seed(13092024)
+y <- rnorm(1000, mean = 5, sd = 1.5)
+error_term <- rnorm(1000)
+z <- 4 + 8*x + rnorm(1000) # linear dependence between x and z
+
+LR <- lm(z ~ y)
+
+
+par(mfrow = c(1, 2))
+plot(x, y, main = "Scatter plot of x and y", col = "blue", pch = 16); grid()
+plot(x, z, main = "Scatter plot of x and z", col = "blue", pch = 16)
+abline(LR, col = "red")
+head(df<-data.frame(x,z),10)
+
+```  
+```{r}
+bin_nor<-rbinom(1000)
+```
+
+
+
+
+```{r}
+# simple lineamodel
+LR<-lm(z~x,data=df)
+# estimate coofificients
+coefficients(LR)
+plot(LR)
+```
+```{r}
+summary(LR)
+``` 
+```{r}
+
+```
+
+
+
+<!-- if else condition -->
+```{r}
+ x<-c(3,0,7,8,5,2,1)
+ifelse(x<4, T, F) 
+```
+<!-- Another alternative way -->
+```{r}
+X<-3
+if(x<4){
+  print(TRUE)
+}else {
+  print(FALSE)
+}
+
+```
+```{r}
+set.seed(123)
+m<- round(rnorm(50, mean = 60, sd=15), 2)
+m
+```
+
+```{r}
+for (y in m) {
+  if(y<60){print("FAIL")
+  } else if(y>=60&y<70)
+  {print("PASS")}else if(y>=70&y<80){print("GOOD PASS")
+  }else if(y>=80&y<85)
+  {print("VERY GOOD PASS")}else{print("Distiction")}
+}
+
+```
+```{r}
+
+category <- character(0)
+ for (y in m) {
+  if(y<60){print("FAIL") 
+    category <- c(category, "FAIL")
+  } else if(y>=60&y<70)
+  {print("PASS")
+    category <- c(category, "PASS")
+    }else if(y>=70&y<80) 
+    {print("GOOD PASS")
+    category<-c(category, "GOOD PASS")
+  }else if(y>=80&y<85)
+  {print("VERY GOOD PASS")
+    category <- c(category, "VERY GOOD PASS")
+    }else
+  {print("Distiction")
+   category<-c(category, "Distiction")
+   }
+   }
+
+head(df_marks <- data.frame(m,category), 50)
+```
+
+```{r}
+category <- character()
+ for (i in 1:length(m)) {
+  if(m[i]<60){print("F") 
+    category[i] <- "F"
+  } else if(m[i]>=60&m[i]<70)
+  {print("P")
+    category <- "P"
+    }else if(m[i]>=70&m[i]<80) 
+    {print("GOOD PASS")
+    category<-"GOOD PASS"
+  }else if(m[i]>=80&m[i]<85)
+  {print("VERY GOOD PASS")
+    category <- "VERY GOOD PASS"
+    }else
+  {print("Distiction")
+   category<- "Distiction"
+   }
+   }
+
+```
+
+```{r}
+category1<-character(0)
+for(i in 1:length(m)){
+  if(m[i]<60){
+    print("F")
+    category1[i]<-"F"
+  }else if(m[i]>=60&m[i]<70){
+    print("P")
+    category1[i]<-"P"
+  }else if(m[i]>=70&m[i]<80){
+    print("GP")
+    category1[i]<-"GP"
+  }else if(m[i]>=80&m[i]<85){
+    print("VGP")
+    category1[i]<-"VGP"
+  }else{
+    print("D")
+    category1[i]<-"D"
+    H<-head(df_marks <- data.frame(m[i],category1))
+    H
+  }
+}
+```
+
+```{r}
+ifelse(m >= 0 & m < 60)
+```
+
+Assignment
+
+write a R function that will take as an input a vector or marks and return a data from of marks and categories("F".P,GP,GVP,D) The function should be able make some plots (pie, barplot)
+```{r}
+toss_coin<-function(m){
+  category <- character(0)
+ for (y in m) {
+  if(y<60){print("FAIL") 
+    category <- c(category, "FAIL")
+  } else if(y>=60&y<70)
+  {print("PASS")
+    category <- c(category, "PASS")
+    }else if(y>=70&y<80) 
+    {print("GOOD PASS")
+    category<-c(category, "GOOD PASS")
+  }else if(y>=80&y<85)
+  {print("VERY GOOD PASS")
+    category <- c(category, "VERY GOOD PASS")
+    }else
+  {print("Distiction")
+   category<-c(category, "Distiction")
+   }
+   }
+
+  df_marks <- data.frame(marks=marks ,category)
+  return(df_marks)
+}
+
+
+
+```
+
+```{r}
+toss_coin(m)
+```
+```{r}
+pie(table(df_marks$category1)) 
+barplot(table(df_marks$category1))
+```
+
+```{r}
